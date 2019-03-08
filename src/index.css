@@ -12,3 +12,24 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.notifications {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+}
+
+.notification {
+  padding: 12px;
+  border-radius: 3px;
+}
+
+.notification-online {
+  background: lightgreen;
+  color: rgb(29, 25, 25);
+}
+
+.notification-offline {
+  background: lightcoral;
+  color: #fff;
+}

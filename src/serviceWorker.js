@@ -10,6 +10,8 @@
 // To learn more about the benefits of this model and instructions on how to
 // opt-in, read http://bit.ly/CRA-PWA
 
+import runtime from 'serviceworker-webpack-plugin/lib/runtime';
+
 const isLocalhost = Boolean(
   window.location.hostname === 'localhost' ||
     // [::1] is the IPv6 localhost address.
@@ -55,8 +57,8 @@ export function register(config) {
 }
 
 function registerValidSW(swUrl, config) {
-  navigator.serviceWorker
-    .register(swUrl)
+  runtime
+    .register()
     .then(registration => {
       registration.onupdatefound = () => {
         const installingWorker = registration.installing;
