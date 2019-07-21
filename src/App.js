@@ -3,6 +3,14 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+class Text extends HTMLElement {
+  connectedCallback() {
+    this.innerHTML = `<div>custom element</div>`
+  }
+}
+
+window.customElements.define('x-text', Text);
+
 const Store = React.createContext();
 
 class App extends React.Component {
@@ -60,6 +68,7 @@ class App extends React.Component {
     return (
       <Store.Provider value={this.state}>
         <div className="App">
+          <x-text></x-text>
           <header className="App-header">
             <img src={logo} className="App-logo" alt="logo" />
             <p>
