@@ -1,31 +1,18 @@
 import React from 'react';
 
-import logo from './logo.svg';
 import './App.css';
+import { withStore } from './components/Store';
+import { Notifications } from './components/Notifications';
+import { PAGES } from './constants';
+import { MainPage } from './pages/main';
+import { MapPage } from './pages/map';
 
-class Text extends HTMLElement {
-  connectedCallback() {
-    this.innerHTML = `<div>custom element</div>`
-  }
-}
+const pages = {
+  [PAGES.MAIN]: MainPage,
+  [PAGES.MAP]: MapPage,
+};
 
-window.customElements.define('x-text', Text);
-
-const Store = React.createContext();
-
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state ={
-      isOffline: false,
-      isContentUpdate: false,
-      notificationOnline: false,
-      notificationOffline: false,
-      updateStore: this.updateStore,
-    };
-  }
-
+class _App extends React.Component {
   componentDidMount() {
     this.checkAppServedFromCache();
     window.addEventListener('online', this.handleOnline, false);
@@ -45,7 +32,7 @@ class App extends React.Component {
   handleOnline = () => {
     const isOnline = navigator.onLine;
 
-    this.setState({
+    this.props.state.update({
       isOffline: !isOnline,
       notificationOnline: isOnline,
       notificationOffline: !isOnline,
@@ -55,73 +42,23 @@ class App extends React.Component {
   handleOffline = () => {
     const isOffline = !navigator.onLine;
 
-    this.setState({
+    this.props.state.update({
       isOffline,
       notificationOffline: isOffline,
       notificationOnline: !isOffline,
     });
   }
 
-  updateStore = state => this.setState(state);
-
   render() {
+    const { page } = this.props.state;
+    const PageComponent = pages[page];
     return (
-      <Store.Provider value={this.state}>
-        <div className="App">
-          <x-text></x-text>
-          <header className="App-header">
-            <img src={logo} className="App-logo" alt="logo" />
-            <p>
-              ! Edit <code>src/App.js</code> and save to reload.
-            </p>
-            <a
-              className="App-link"
-              href="https://reactjs.org"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learn React
-            </a>
-          </header>
-        </div>
-        <Notifications/>
-      </Store.Provider>
+      <div className="App-root">
+        <PageComponent />
+        <Notifications />
+      </div>
     );
   }
 }
 
-const Notifications = () => {
-  return (
-    <Store.Consumer>
-      {store => (
-        <div className="notifications">
-          {store.notificationOnline && (
-            <div
-              className="notification notification-online"
-              onClick={() => store.updateStore({
-                notificationOnline: !store.notificationOnline,
-              })}
-            >
-              Internet connection was found.
-              Offline mode is off.
-            </div>
-          )}
-          {store.notificationOffline && (
-            <div
-              className="notification notification-offline"
-              onClick={() => store.updateStore({
-                notificationOffline: !store.notificationOffline,
-              })}
-            >
-              No internet connection found.
-              App is running in offline mode.
-            </div>
-          )}
-        </div>
-      )}
-    </Store.Consumer>
-  )
-}
-
-
-export default App;
+export const App = withStore(_App);
